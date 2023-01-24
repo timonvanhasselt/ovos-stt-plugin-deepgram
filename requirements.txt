@@ -1,4 +1,1 @@
-requests
-ovos_utils>=0.0.8
 ovos-plugin-manager>=0.0.1
-ovos-backend-client
