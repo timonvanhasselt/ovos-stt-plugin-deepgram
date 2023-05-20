@@ -150,7 +150,7 @@ class DeepgramSTT(STT):
         lang = language or self.lang
         l1, l2 = lang.split("-")
         lang = f"{l1.lower()}-{l2.upper()}"
-        utt = self.recognizer.recognize_deepgram(audio, language=lang)
+        utt = self.recognizer.recognize_deepgram(audio, language=lang, key=self.key)
         return utt
 
 
