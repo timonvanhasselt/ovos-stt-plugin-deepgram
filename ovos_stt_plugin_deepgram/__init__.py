@@ -1,4 +1,5 @@
 import json
+from typing import List, Tuple, Optional
 from urllib.error import URLError, HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -146,12 +147,34 @@ class DeepgramSTT(STT):
             raise ValueError("Api key for deepgram not set in mycroft.conf")
         self.recognizer = Recognizer()
 
-    def execute(self, audio, language=None):
-        lang = language or self.lang
+    def transcribe(self, audio, lang: Optional[str] = None) -> List[Tuple[str, float]]:
+        """transcribe audio data to a list of
+        possible transcriptions and respective confidences"""
+        lang = lang or self.lang
         l1, l2 = lang.split("-")
         lang = f"{l1.lower()}-{l2.upper()}"
-        utt = self.recognizer.recognize_deepgram(audio, language=lang, key=self.key)
-        return utt
+        res = self.recognizer.recognize_deepgram(audio, language=lang, key=self.key, show_all=True)
+        transcripts = res['results']['channels'][0]['alternatives']
+        return [(u["transcript"], u["confidence"]) for u in transcripts]
+
+    def execute(self, audio, language=None) -> str:
+        transcripts = self.transcribe(audio, language)
+        if not transcripts:
+            return ""
+        return transcripts[0][0]
 
 
 DeepgramSTTConfig = {}
+
+if __name__ == "__main__":
+    b = DeepgramSTT()
+    from speech_recognition import Recognizer, AudioFile
+
+    jfk = "/home/miro/PycharmProjects/ovos-stt-plugin-fasterwhisper/jfk.wav"
+    with AudioFile(jfk) as source:
+        audio = Recognizer().record(source)
+
+    a = b.transcribe(audio, lang="en-us")
+    # 2023-04-29 17:42:30.769 - OVOS - __main__:execute:145 - INFO - Detected speech language 'en' with probability 1
+    print(a)
+    # And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country.
