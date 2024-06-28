@@ -13,9 +13,7 @@ class Recognizer(sr.Recognizer):
             self,
             audio_data,
             key,
-            tier='enhanced',
             model='nova2-conversationalai',
-            version='latest',
             language='en-US',
             detect_language=False,
             punctuate=True,
@@ -39,15 +37,10 @@ class Recognizer(sr.Recognizer):
     ):
         """
         Performs speech recognition of ``audio_data`` (an ``AudioData`` instance) using the Deepgram speech recognition API.
-        Deepgram uses an API secret to authenticate users and authorize requests. To obtain an API secret, create an account with `Deepgram <https://console.deepgram.com>`__. The API secret is a 40-character hexadecimal string that can only be retrieved at creation time. It is identified using a UUID, which is not the API secret and shouldn't be used here.
-        If ``show_all`` is false (the default), returns the most likely transcript string; otherwise, returns the raw API JSON response.
-        Details of the various features can be found in the `Deepgram Documentation <https://developers.deepgram.com/>`__.
         """
         assert isinstance(audio_data, sr.AudioData), "``audio_data`` must be audio data"
         assert isinstance(key, str), "``key`` must be a string"
-        assert tier is None or (isinstance(tier, str) and tier in {'base', 'enhanced'}), "invalid ``tier``"
         assert model is None or isinstance(model, str), "``model`` must be None or a string"
-        assert version is None or isinstance(version, str), "``version`` must be None or a string"
         assert language is None or isinstance(language, str), "``language`` must be None or a string"
         assert isinstance(detect_language, bool), "``detect_language`` must be a bool"
         assert isinstance(punctuate, bool), "``punctuate`` must be a bool"
@@ -82,9 +75,7 @@ class Recognizer(sr.Recognizer):
 
         params = [
             (p[0], convert_bool(p[1])) for p in (
-                ('tier', tier),
                 ('model', model),
-                ('version', version),
                 ('language', language),
                 ('detect_language', detect_language),
                 ('punctuate', punctuate),
