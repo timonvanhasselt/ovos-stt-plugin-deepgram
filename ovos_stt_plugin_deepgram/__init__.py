@@ -9,14 +9,12 @@ from ovos_plugin_manager.templates.stt import STT
 
 
 class Recognizer(sr.Recognizer):
-    # port of https://github.com/Uberi/speech_recognition/pull/631
-
     def recognize_deepgram(
             self,
             audio_data,
             key,
             tier='enhanced',
-            model='general',
+            model='nova2-conversationalai',
             version='latest',
             language='en-US',
             detect_language=False,
@@ -49,7 +47,7 @@ class Recognizer(sr.Recognizer):
         assert isinstance(key, str), "``key`` must be a string"
         assert tier is None or (isinstance(tier, str) and tier in {'base', 'enhanced'}), "invalid ``tier``"
         assert model is None or isinstance(model, str), "``model`` must be None or a string"
-        assert version is None or isinstance(version, str), "``verison`` must be None or a string"
+        assert version is None or isinstance(version, str), "``version`` must be None or a string"
         assert language is None or isinstance(language, str), "``language`` must be None or a string"
         assert isinstance(detect_language, bool), "``detect_language`` must be a bool"
         assert isinstance(punctuate, bool), "``punctuate`` must be a bool"
@@ -66,7 +64,7 @@ class Recognizer(sr.Recognizer):
             isinstance(s, str) for s in search)), "``search`` must be None or a list of strings"
         assert replace is None or (isinstance(replace, dict) and all(
             isinstance(k, str) and isinstance(v, str) for k, v in
-            replace.items())), "``replace`` must be None or a dicitonary with string keys and values"
+            replace.items())), "``replace`` must be None or a dictionary with string keys and values"
         assert keywords is None or (isinstance(keywords, list) and all(
             isinstance(s, str) for s in keywords)), "``keywords`` must be None or a list of strings"
         assert isinstance(paragraphs, bool), "``paragraphs`` must be a bool"
@@ -146,8 +144,8 @@ class DeepgramSTT(STT):
         if not self.key:
             raise ValueError("Api key for deepgram not set in mycroft.conf")
 
-        # Add model configuration
-        self.model = self.config.get("model", "nova-2-general")
+        # Add model configuration with default as 'nova2-conversationalai'
+        self.model = self.config.get("model", "nova2-conversationalai")
         self.recognizer = Recognizer()
 
     def transcribe(self, audio, lang: Optional[str] = None) -> List[Tuple[str, float]]:
@@ -177,6 +175,4 @@ if __name__ == "__main__":
         audio = Recognizer().record(source)
 
     a = b.transcribe(audio, lang="en-us")
-    # 2023-04-29 17:42:30.769 - OVOS - __main__:execute:145 - INFO - Detected speech language 'en' with probability 1
     print(a)
-    # And so, my fellow Americans, ask not what your country can do for you. Ask what you can do for your country.
