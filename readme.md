@@ -14,7 +14,10 @@ By default the global language used by mycroft-core will be used
 ```json
   "stt": {
     "module": "ovos-stt-plugin-deepgram",
-    "ovos-stt-plugin-deepgram": {"key": "xtimes40"}
+    "ovos-stt-plugin-deepgram": {
+            "key": "xtimes40",
+            "model": "nova-2-general"  // Can be one of: 'nova-2-general', 'nova-2-meeting', 'nova-2-phonecall', 'nova-2-voicemail', 'nova-2-finance', 'nova-2-conversationalai', 'nova-2-video', 'nova-2-medical', 'nova-2-drivethru', 'nova-2-automotive'
+        }
   }
- 
 ```
+
