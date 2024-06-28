@@ -145,15 +145,17 @@ class DeepgramSTT(STT):
         self.key = self.config.get("key")
         if not self.key:
             raise ValueError("Api key for deepgram not set in mycroft.conf")
+
+        # Add model configuration
+        self.model = self.config.get("model", "nova-2-general")
         self.recognizer = Recognizer()
 
     def transcribe(self, audio, lang: Optional[str] = None) -> List[Tuple[str, float]]:
-        """transcribe audio data to a list of
-        possible transcriptions and respective confidences"""
+        """Transcribe audio data to a list of possible transcriptions and respective confidences"""
         lang = lang or self.lang
         l1, l2 = lang.split("-")
         lang = f"{l1.lower()}-{l2.upper()}"
-        res = self.recognizer.recognize_deepgram(audio, language=lang, key=self.key, show_all=True)
+        res = self.recognizer.recognize_deepgram(audio, language=lang, key=self.key, model=self.model, show_all=True)
         transcripts = res['results']['channels'][0]['alternatives']
         return [(u["transcript"], u["confidence"]) for u in transcripts]
 
